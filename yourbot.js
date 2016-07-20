@@ -20,6 +20,7 @@ To get your App up and running:
     *Make sure you have your Request URL for interactive messages set to https://yoursubdomain.localtunnel.me/slack/receive
     *Run your bot with "node yourbot.js"
     *Hit the URL "https://yoursubdomain.localtunnel.me/login" to add your bot to a team
+    *Direct message your bot "test button" to make sure buttons are working
     *Invite your bot to a channel and have fun!
 
 Created by Christian Hapgood
@@ -131,6 +132,34 @@ controller.hears(['get me a cat','cat'], 'direct_message,direct_mention,mention'
     });
 });
 
+controller.hears(['test button'], 'direct_message,direct_mention,mention', function (bot, message) {
+    var testButtonReply = {
+                username: 'Button Bot' ,
+                text: 'This is a test message with a button',
+                replace_original: 'true',
+                attachments: [
+                    {
+                        fallback: "fallback text",
+                        callback_id: '123',
+                        attachment_type: 'default',
+                        title: 'message title',
+                        text: 'message content',
+                        color: '#0075C7',
+                        actions: [
+                            {
+                              "name": "Webcam",
+                              "text": "Webcam View",
+                              "type": "button",
+                              "value": "whatever you want to pass into the interactive_message_callback"}
+                        ]
+                    }
+                ],
+                icon_url: 'http://14379-presscdn-0-86.pagely.netdna-cdn.com/wp-content/uploads/2014/05/ButtonButton.jpg'
+                
+            }
+    bot.reply(message, testButtonReply);            
+});
+
 controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
     'direct_message,direct_mention,mention', function (bot, message) {
         var hostname = os.hostname();
@@ -176,22 +205,7 @@ controller.on('interactive_message_callback', function(bot, message) {
     // Callback ID 123 for weather bot webcam
     switch(callbackId) {
     case "123":
-        // Handles the weather bot button
-        var query = message.actions[0].value;
-        var link = "http://novascotia.ca/tran/webcam/secure/images/rwis_cam/"+query+"_1.jpg";    
-        var camWeatherReply = {
-                    username: 'Weather Bot' ,
-                    attachments: [
-                        {
-                            fallback: "The WebCam could not be retrieved",
-                            attachment_type: 'default',
-                            title: 'WebCam View',
-                            image_url: link
-                        }
-                    ],
-                    icon_url: 'https://www.mikeafford.com/store/store-images/ms02_example_heavy_rain_showers.png'                
-                }
-        bot.replyInteractive(message, camWeatherReply);
+        bot.replyInteractive(message, "Button works!");
         break;
     // Add more cases here to handle for multiple buttons    
     default:
