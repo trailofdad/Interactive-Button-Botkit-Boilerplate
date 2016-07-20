@@ -1,5 +1,5 @@
-# Interactive-Button-Botkit-Seed
-A Slackbot project seed for bots with interactive buttons.
+# Interactive-Button-Botkit-Boilerplate
+A Slackbot project boilerplate for bots with interactive buttons.
 
 Read all the docs on botkit @ https://github.com/howdyai/botkit
 Read all the Slack API docs @ https://api.slack.com/ (especially the bit on interactive buttons)
