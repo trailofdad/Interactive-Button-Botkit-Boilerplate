@@ -147,8 +147,8 @@ controller.hears(['test button'], 'direct_message,direct_mention,mention', funct
                         color: '#0075C7',
                         actions: [
                             {
-                              "name": "Webcam",
-                              "text": "Webcam View",
+                              "name": "button name",
+                              "text": "button text",
                               "type": "button",
                               "value": "whatever you want to pass into the interactive_message_callback"}
                         ]
@@ -175,19 +175,19 @@ controller.hears(['^help[ ]?(.*)'], 'direct_message,direct_mention', function (b
 
     switch(topic) {
         case "weather":
-            bot.reply(message, 'To check the weather type "weather (city),(province code),(country code)". Province and country code are optional but reccommended for accurate results. Example command: "weather amherst,ns,ca". Webcam highway views are available for Yarmouth, Cornwallis, Bridgewater, Hubbards, Bedford, Pugwash, Truro, North Sydney and Amherst');
+            bot.reply(message, 'If you had a command to get you the weather you could explain it here');
             break;
         case "cat":
-            bot.reply(message, 'Type "get me a cat" to get a cute gif of a cat');
+            bot.reply(message, 'Type "get me a cat" to get a gif of a kitty');
             break;
         case "room status":
-            bot.reply(message, 'To get the status of boardrooms or enclaves type "room status"');
+            bot.reply(message, 'This would display info about the "room status" command');
             break;
         case "uptime":
             bot.reply(message, 'Displays the bot uptime and host');
             break;
         default:
-            bot.reply(message, 'Here is a list of commands: ("weather", "cat", "room status", "uptime", or paste a jira ticket url) for more information on a specific command type "help (command)"');
+            bot.reply(message, 'You might want to have a list of all the commands here');
     }
 
 });
