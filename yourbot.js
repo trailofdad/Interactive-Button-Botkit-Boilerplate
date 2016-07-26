@@ -44,11 +44,13 @@ var express = require('express');
 // Using a token to get user information. Generate a token here https://api.slack.com/docs/oauth-test-tokens
 var userToken = config.userToken;
 
+// Check for ENV variables - Required to be a slack app to use interactive buttons
 if (!process.env.clientId || !process.env.clientSecret || !process.env.port) {
   console.log('Error: Specify clientId clientSecret and port in environment');
   process.exit(1);
 }
 
+// Sample controller config - REQUIRED FOR INTERACTIVE BUTTONS
 var controller = Botkit.slackbot({
   debug: false,
   interactive_replies: true, // tells botkit to send button clicks into conversations
@@ -62,6 +64,7 @@ var controller = Botkit.slackbot({
   }
 );
 
+// Setup for the Webserver - REQUIRED FOR INTERACTIVE BUTTONS
 controller.setupWebserver(process.env.port,function(err,webserver) {
   controller.createWebhookEndpoints(controller.webserver);
 
@@ -72,20 +75,17 @@ controller.setupWebserver(process.env.port,function(err,webserver) {
       res.send('Success!');
     }
   });
-
 });
 
+// Method for when the bot is added to a team 
 controller.on('create_bot',function(bot,config) {
-
   if (_bots[bot.config.token]) {
     // already online! do nothing.
   } else {
     bot.startRTM(function(err) {
-
       if (!err) {
         trackBot(bot);
       }
-
       bot.startPrivateConversation({user: config.createdBy},function(err,convo) {
         if (err) {
           console.log(err);
@@ -94,10 +94,8 @@ controller.on('create_bot',function(bot,config) {
           convo.say('You must now /invite me to a channel so that I can be of use!');
         }
       });
-
     });
   }
-
 });
 
 // Handle events related to the websocket connection to Slack
@@ -117,21 +115,7 @@ function trackBot(bot) {
   _bots[bot.config.token] = bot;
 }
 
-controller.hears(['get me a cat','cat'], 'direct_message,direct_mention,mention', function (bot, message) {
-    var name = message.match[1];
-    controller.storage.users.get(message.user, function (err, user) {
-        if (!user) {
-            user = {
-                id: message.user,
-            };
-        }
-        user.name = name;
-        controller.storage.users.save(user, function (err, id) {
-            bot.reply(message, {"text": 'http://thecatapi.com/api/images/get?format=src&type=gif', "username": "CatBot", "icon_url":"https://ih1.redbubble.net/image.11748456.8987/sticker,375x360.png"});
-        });
-    });
-});
-
+// Controller to test the interative button setup
 controller.hears(['test button'], 'direct_message,direct_mention,mention', function (bot, message) {
     var testButtonReply = {
                 username: 'Button Bot' ,
@@ -160,6 +144,7 @@ controller.hears(['test button'], 'direct_message,direct_mention,mention', funct
     bot.reply(message, testButtonReply);            
 });
 
+// Sample uptime method
 controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
     'direct_message,direct_mention,mention', function (bot, message) {
         var hostname = os.hostname();
@@ -168,6 +153,25 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
             ':robot_face: I am a bot named <@' + bot.identity.name +
             '>. I have been running for ' + uptime + ' on ' + hostname + '.');
 });
+
+// Function to format data for the uptime method
+function formatUptime(uptime) {
+    var unit = 'second';
+    if (uptime > 60) {
+        uptime = uptime / 60;
+        unit = 'minute';
+    }
+    if (uptime > 60) {
+        uptime = uptime / 60;
+        unit = 'hour';
+    }
+    if (uptime != 1) {
+        unit = unit + 's';
+    }
+
+    uptime = uptime + ' ' + unit;
+    return uptime;
+}
 
 // Sample help controller method
 controller.hears(['^help[ ]?(.*)'], 'direct_message,direct_mention', function (bot, message) {
@@ -192,6 +196,7 @@ controller.hears(['^help[ ]?(.*)'], 'direct_message,direct_mention', function (b
 
 });
 
+//REQUIRED FOR INTERACTIVE BUTTONS
 // This controller method handles every interactive button click
 controller.on('interactive_message_callback', function(bot, message) {
     // These 3 lines are used to parse out the id's
@@ -214,24 +219,7 @@ controller.on('interactive_message_callback', function(bot, message) {
     }
 });
 
-function formatUptime(uptime) {
-    var unit = 'second';
-    if (uptime > 60) {
-        uptime = uptime / 60;
-        unit = 'minute';
-    }
-    if (uptime > 60) {
-        uptime = uptime / 60;
-        unit = 'hour';
-    }
-    if (uptime != 1) {
-        unit = unit + 's';
-    }
-
-    uptime = uptime + ' ' + unit;
-    return uptime;
-}
-
+//REQUIRED FOR INTERACTIVE MESSAGES
 controller.storage.teams.all(function(err,teams) {
 
   if (err) {

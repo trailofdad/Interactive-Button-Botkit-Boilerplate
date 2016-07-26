@@ -11,7 +11,6 @@ Read all the Slack API docs @ https://api.slack.com/ (especially the bit on inte
 * Includes sample help method 
 * Includes uptime method
 * Includes config file for tokens
-* Includes a method to get cat gifs on demand.
 
 ##To get your App up and running:
     * Run an `npm install`
